@@ -13,7 +13,7 @@ SELECT title, rating             		/* query comprobacion pongo aqui tambien el r
     
     /* query final */
     
-    SELECT title             		
+SELECT title             		
 	FROM film                            
 	WHERE rating = "PG-13";
 
@@ -56,7 +56,7 @@ SELECT first_name, actor_id                   /* query comprobacion */
     
     /* query final */
     
-    SELECT first_name,                  
+SELECT first_name               
 	FROM actor
 	WHERE actor_id BETWEEN 10 AND 20;
     
@@ -86,18 +86,18 @@ SELECT rating, COUNT(*) AS total_peliculas      /* utilizo un count * para que m
 nombre y apellido junto con la cantidad de películas alquiladas. **/
 
 
-SELECT c.customer_id, c.first_name, c.last_name, COUNT(r.rental_id) AS cantidad_peliculas_alquiladas /*con el count contamos los alquileres del cliente*/
+SELECT c.customer_id, first_name, last_name, COUNT(r.rental_id) AS cantidad_peliculas_alquiladas /*con el count contamos los alquileres del cliente*/
 	FROM customer AS c
 	INNER JOIN rental AS r    /*con join conecto las tablas alquileres y clientes para que me diga los clientes que tienen peliculas alquiladas*/
 		ON c.customer_id = r.customer_id
-	GROUP BY c.customer_id, c.first_name, c.last_name;       /* agrupo el resultado de id, nombre, apellido y peliculas, No pongo r.rental porque tiene una funcion */ 
+	GROUP BY c.customer_id, first_name, last_name;       /* agrupo el resultado de id, nombre, apellido y peliculas, No pongo r.rental porque tiene una funcion */ 
 	
 
 /* EJERCICIO 11.Encuentra la cantidad total de películas alquiladas por categoría y muestra el nombre de la categoría
 junto con el recuento de alquileres.*/
 
 
-SELECT c.name AS categoria, COUNT(r.rental_id) AS recuento_alquileres   /* contamos alquileres con count */
+SELECT name AS categoria, COUNT(r.rental_id) AS recuento_alquileres   /* contamos alquileres con count */
 	FROM category AS c
 	INNER JOIN film_category AS fc                  /* conecto las tablas de  film categoria--> film --> inventario-->alquiler*/
 		ON c.category_id = fc.category_id
@@ -107,7 +107,7 @@ SELECT c.name AS categoria, COUNT(r.rental_id) AS recuento_alquileres   /* conta
 		ON fc.film_id = i.film_id
 	INNER JOIN rental AS r 
 		ON i.inventory_id = r.inventory_id
-	GROUP BY c.name;   													/* agrupamos por la categoria */
+	GROUP BY name;   													/* agrupamos por la categoria */
     
     
 /* EJERCICIO 12. Encuentra el promedio de duración de las películas para cada clasificación de la tabla film y
@@ -125,7 +125,7 @@ SELECT first_name,last_name
 		ON a.actor_id = fi.actor_id
 	INNER JOIN film AS f
 		ON fi.film_id = f.film_id
-	WHERE f.title = 'Indian Love';
+	WHERE title = 'Indian Love';
     
 /* EJERCICIO 14. Muestra el título de todas las películas que contengan la palabra "dog" o "cat" en su descripción*/
     
@@ -135,7 +135,7 @@ SELECT title, description
         
 /* EJERCICIO 15. Hay algún actor o actriz que no aparezca en ninguna película en la tabla film_actor.*/
 
-SELECT a.first_name
+SELECT first_name
 	FROM actor AS a                                    
 	LEFT JOIN film_actor AS fa           /* utilizo el left join para que me muestre las coincidencias entre la tabla actor y film_actor */
 		ON a.actor_id = fa.actor_id
@@ -155,15 +155,15 @@ SELECT f.title
 		ON f.film_id = fc.film_id
 	INNER JOIN category AS c
 		ON fc.category_id = c.category_id
-	WHERE c.name = 'Family';
+	WHERE name = 'Family';
 
 /* EJERCICIO 18. Muestra el nombre y apellido de los actores que aparecen en más de 10 películas*/
 
-SELECT a.first_name, a.last_name
+SELECT first_name, last_name
 	FROM actor AS a
 	INNER JOIN film_actor AS fa          /* Conecto la tabla film_actor y actor */
 		ON a.actor_id = fa.actor_id
-	GROUP BY a.first_name, a.last_name   /* Agrupo peliculas de un mismo actor */
+	GROUP BY first_name, last_name   /* Agrupo peliculas de un mismo actor */
 	HAVING COUNT(fa.film_id) > 10;     /* usamos el having para poder añadirle el conteo ya que se tiene que hacer despues de la agrupacion */
                                         /* Filtra grupos calculados despues de la funcion de agregacion*/
                                         
@@ -177,13 +177,13 @@ SELECT title
 /* EJERCICIO 20. Encuentra las categorías de películas que tienen un promedio de duración superior a 120 minutos y
 muestra el nombre de la categoría junto con el promedio de duración.*/
 
-SELECT c.name AS categoria, AVG(f.length) AS promedio_duracion
+SELECT name AS categoria, AVG(f.length) AS promedio_duracion
 	FROM category AS c
-	INNER JOIN film_category AS fc                /* concto las tablas category -->film_category-->film*/
+	INNER JOIN film_category AS fc                /* conEcto las tablas category -->film_category-->film*/
 		ON c.category_id = fc.category_id
 	INNER JOIN film AS f
 		ON fc.film_id = f.film_id
-	GROUP BY c.name
+	GROUP BY name
 	HAVING AVG(f.length) > 120;                   /* Usamos el having ya que se calcula despues de hacer la agrupacion. */
     
 /*EJERCICIO 21. Encuentra los actores que han actuado en al menos 5 películas y muestra el nombre del actor junto
@@ -192,6 +192,55 @@ con la cantidad de películas en las que han actuado.*/
 SELECT a.first_name, a.last_name, COUNT(fa.film_id) AS cantidad_peliculas
 	FROM actor AS a
 	INNER JOIN film_actor AS fa 
-		ON a.actor_id = fa.actor_id
+		ON a.actor_id = fa.actor_id                  
 	GROUP BY a.first_name, a.last_name
 	HAVING COUNT(fa.film_id) >= 5;
+    
+/* EJERCICIO 24. Encuentra el título de las películas que son comedias y tienen una duración mayor a 180 minutos en
+la tabla film*/
+
+SELECT f.title
+	FROM film AS f
+	INNER JOIN film_category AS fc               /* conecto las tablas Film, film_category y category */
+		ON f.film_id = fc.film_id
+	INNER JOIN category AS c 
+		ON fc.category_id = c.category_id
+	WHERE c.name = 'Comedy' AND f.length > 180;
+    
+/*EJERCICIO 22. Encuentra el título de todas las películas que fueron alquiladas por más de 5 días. Utiliza una
+subconsulta para encontrar los rental_ids con una duración superior a 5 días y luego selecciona las
+películas correspondientes.*/
+
+SELECT title                       /* query para encontar el titulo de todas las películas alquiladas */
+	FROM film 
+	WHERE rental_duration > 5;
+
+
+                            
+SELECT DISTINCT title AS nombre_peliculas   /* con distinct me evito que se repitan titulos si la pelicula se alquilo varias veces*/
+	FROM film AS f
+	INNER JOIN inventory AS i        /* conecto film, inventory y rental*/
+		ON f.film_id = i.film_id
+	INNER JOIN rental AS r
+		ON i.inventory_id = r.inventory_id
+	WHERE r.rental_id IN (SELECT rental_id
+							FROM rental
+								WHERE return_date IS NOT NULL AND DATEDIFF(return_date, rental_date) > 5);  
+                                
+                                  /* DATEDIFF(return_date, rental_date) calcula (fecha en la que se alquilo y se devolvio) si no se
+                                  ha devuelto NULL*/
+                                  
+/* EJERCICIO 23.Encuentra el nombre y apellido de los actores que no han actuado en ninguna película de la categoría
+"Horror". Utiliza una subconsulta para encontrar los actores que han actuado en películas de la
+categoría "Horror" y luego exclúyelos de la lista de actores.*/
+
+
+SELECT first_name, last_name                        /*actores que no han actuado en cat de terror */
+	FROM actor
+	WHERE actor_id NOT IN (SELECT actor_id
+								FROM film_actor AS fa                 /*subconsulta  lo que si han actuado */
+								INNER JOIN film_category AS fc          /*conectamos actor,film_actor,film y categoria*/
+										ON fa.film_id = fc.film_id  
+								INNER JOIN category AS c 
+										ON fc.category_id = c.category_id
+								WHERE name = 'Horror')

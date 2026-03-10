@@ -12,6 +12,6 @@ He realizado consultas como por ejemplo:
     - Encontrar el título de películas en ciertas tablas o categorías
     -Encontrar el nombre de actores que aparecen en ciertas películas
     -Buscar promedios de duración de películas
-    -Búsqueda de alquileres
+     y Búsqueda de alquileres.
 
 Laura Mulero Sequera
