@@ -189,7 +189,7 @@ SELECT name AS categoria, AVG(f.length) AS promedio_duracion
 /*EJERCICIO 21. Encuentra los actores que han actuado en al menos 5 películas y muestra el nombre del actor junto
 con la cantidad de películas en las que han actuado.*/
 
-SELECT a.first_name, a.last_name, COUNT(fa.film_id) AS cantidad_peliculas
+SELECT first_name, last_name, COUNT(fa.film_id) AS cantidad_peliculas
 	FROM actor AS a
 	INNER JOIN film_actor AS fa 
 		ON a.actor_id = fa.actor_id                  
