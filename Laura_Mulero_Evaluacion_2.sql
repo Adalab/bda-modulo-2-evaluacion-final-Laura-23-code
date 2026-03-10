@@ -163,12 +163,35 @@ SELECT a.first_name, a.last_name
 	FROM actor AS a
 	INNER JOIN film_actor AS fa          /* Conecto la tabla film_actor y actor */
 		ON a.actor_id = fa.actor_id
-	GROUP BY a.actor_id, a.first_name, a.last_name
-	HAVING COUNT(fa.film_id) > 10;     /* usamos el having para poder añadirle el conteo ya que se tiene que hacerse despues de la agrupacion */
+	GROUP BY a.first_name, a.last_name   /* Agrupo peliculas de un mismo actor */
+	HAVING COUNT(fa.film_id) > 10;     /* usamos el having para poder añadirle el conteo ya que se tiene que hacer despues de la agrupacion */
+                                        /* Filtra grupos calculados despues de la funcion de agregacion*/
                                         
 /* EJERCICIO 19. Encuentra el título de todas las películas que son "R" y tienen una duración mayor a 2 horas en la
 tabla film. */
 
-SELECT title,                    
+SELECT title                   
 	FROM film
 	WHERE rating = 'R' AND length > 120;
+    
+/* EJERCICIO 20. Encuentra las categorías de películas que tienen un promedio de duración superior a 120 minutos y
+muestra el nombre de la categoría junto con el promedio de duración.*/
+
+SELECT c.name AS categoria, AVG(f.length) AS promedio_duracion
+	FROM category AS c
+	INNER JOIN film_category AS fc                /* concto las tablas category -->film_category-->film*/
+		ON c.category_id = fc.category_id
+	INNER JOIN film AS f
+		ON fc.film_id = f.film_id
+	GROUP BY c.name
+	HAVING AVG(f.length) > 120;                   /* Usamos el having ya que se calcula despues de hacer la agrupacion. */
+    
+/*EJERCICIO 21. Encuentra los actores que han actuado en al menos 5 películas y muestra el nombre del actor junto
+con la cantidad de películas en las que han actuado.*/
+
+SELECT a.first_name, a.last_name, COUNT(fa.film_id) AS cantidad_peliculas
+	FROM actor AS a
+	INNER JOIN film_actor AS fa 
+		ON a.actor_id = fa.actor_id
+	GROUP BY a.first_name, a.last_name
+	HAVING COUNT(fa.film_id) >= 5;
