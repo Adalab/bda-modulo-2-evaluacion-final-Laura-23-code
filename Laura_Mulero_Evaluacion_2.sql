@@ -82,13 +82,22 @@ SELECT rating, COUNT(*) AS total_peliculas      /* utilizo un count * para que m
 	GROUP BY rating;                   /* hago la agrupacion (group by) para que me devuleva la cladificacion ( rating) junto con el recuento de peliculas */
 
 
-/* ejercicio 10. Encuentra la cantidad total de películas alquiladas por cada cliente y muestra el ID del cliente, su
+/* EJERCICIO 10. Encuentra la cantidad total de películas alquiladas por cada cliente y muestra el ID del cliente, su
 nombre y apellido junto con la cantidad de películas alquiladas. **/
 
 
-SELECT c.customer_id, c.first_name, c.last_name, COUNT(r.rental_id) AS cantidad_peliculas_alquiladas -- con el count contamos los alquileres del cliente
+SELECT c.customer_id, c.first_name, c.last_name, COUNT(r.rental_id) AS cantidad_peliculas_alquiladas /*con el count contamos los alquileres del cliente*/
 	FROM customer AS c
-	INNER JOIN rental AS r    -- con join conecto las tablas alquileres y clientes para que me diga los clientes que tienen peliculas alquiladas
+	INNER JOIN rental AS r    /*con join conecto las tablas alquileres y clientes para que me diga los clientes que tienen peliculas alquiladas*/
 		ON c.customer_id = r.customer_id
 	GROUP BY c.customer_id, c.first_name, c.last_name;       /* agrupo el resultado de id, nombre, apellido y peliculas, No pongo r.rental porque tiene una funcion */ 
 	
+
+/* EJERCICIO 11.Encuentra la cantidad total de películas alquiladas por categoría y muestra el nombre de la categoría
+junto con el recuento de alquileres.*/
+
+SELECT c.name, COUNT(r.rental_id) AS total_alquileres
+	FROM category AS c
+	INNER JOIN rental AS r    
+		ON c.category = r.category_id
+	GROUP BY  c.name
