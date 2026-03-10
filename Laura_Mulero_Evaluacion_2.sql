@@ -96,8 +96,42 @@ SELECT c.customer_id, c.first_name, c.last_name, COUNT(r.rental_id) AS cantidad_
 /* EJERCICIO 11.Encuentra la cantidad total de películas alquiladas por categoría y muestra el nombre de la categoría
 junto con el recuento de alquileres.*/
 
-SELECT c.name, COUNT(r.rental_id) AS total_alquileres
+
+SELECT c.name AS categoria, COUNT(r.rental_id) AS recuento_alquileres   /* contamos alquileres con count */
 	FROM category AS c
-	INNER JOIN rental AS r    
-		ON c.category = r.category_id
-	GROUP BY  c.name
+	INNER JOIN film_category AS fc                  /* conecto las tablas de  film categoria--> film --> inventario-->alquiler*/
+		ON c.category_id = fc.category_id
+	INNER JOIN film AS f
+		ON fc.film_id = f.film_id
+	INNER JOIN inventory AS i 
+		ON fc.film_id = i.film_id
+	INNER JOIN rental AS r 
+		ON i.inventory_id = r.inventory_id
+	GROUP BY c.name;   													/* agrupamos por la categoria */
+    
+    
+/* EJERCICIO 12. Encuentra el promedio de duración de las películas para cada clasificación de la tabla film y
+muestra la clasificación junto con el promedio de duración.*/
+
+SELECT rating, AVG(length) AS promedio_duracion
+	FROM film
+	GROUP BY rating;
+    
+    /* EJERCICIO 13. Encuentra el nombre y apellido de los actores que aparecen en la película con title "Indian Love". */
+
+SELECT first_name,last_name                        
+	FROM actor AS a
+	INNER JOIN film_actor AS fi                      /* union de tablas de actor --> film_actor--> film */
+		ON a.actor_id = fi.actor_id
+	INNER JOIN film AS f
+		ON fi.film_id = f.film_id
+	WHERE f.title = 'Indian Love';
+    
+    /* EJERCICIO 14. Muestra el título de todas las películas que contengan la palabra "dog" o "cat" en su descripción*/
+    
+SELECT title, description                         
+	FROM film
+	WHERE description LIKE "%DOD%" OR description LIKE "%CAT%";
+        
+
+	
